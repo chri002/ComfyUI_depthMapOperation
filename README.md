@@ -128,6 +128,7 @@ Exports point cloud to PLY format (ASCII/binary).
 ![Empty Image Placeholder]()
 ### Description
 Import PLY point cloud files into compatible Point3D format.
+(Sperimental)
 
 **Input Parameter**:
 - `.ply` file selection
