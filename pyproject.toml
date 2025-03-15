@@ -1,0 +1,14 @@
+[project]
+name = "depthmapoperation"
+description = "A simple set of nodes to generate a point cloud from an image and its depth map, perform transformations and some basic operations."
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/chri002/ComfyUI_depthMapOperation"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI_depthMapOperation"
+Icon = ""
