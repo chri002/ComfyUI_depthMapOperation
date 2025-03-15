@@ -11,6 +11,8 @@ Here an example of what can be done (not the gif, but the various rotations)
   
 </div>
 
+---
+
 # Installation
 
 On the console in the custom_nodes filder execute:
@@ -31,9 +33,9 @@ these nodes require in order to function:
 
 ![workflow](/assets/workflow.png)
 
-# Nodes
-
 ---
+
+# Nodes
 
 ## Image To Points (Torch)
 ![Image To Points](/assets/im2po.png)
