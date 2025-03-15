@@ -5,7 +5,7 @@
 ---
 
 ## Image To Points (Torch)
-![Empty Image Placeholder]()
+![Image To Points](/assets/im2po.png)
 ### Description
 GPU-accelerated version using PyTorch tensors. Maintains gradient flow and supports automatic device placement.
 
@@ -22,7 +22,7 @@ GPU-accelerated version using PyTorch tensors. Maintains gradient flow and suppo
 ---
 
 ## Transform Points
-![Empty Image Placeholder]()
+![Transform Points](/assets/trpo.png)
 ### Description
 Applies 3D transformations to point clouds (rotation, translation, scaling).
 
@@ -38,7 +38,7 @@ Applies 3D transformations to point clouds (rotation, translation, scaling).
 ---
 
 ## Points To Image (Orthographic)
-![Empty Image placeholder]()
+![Points To Image (Orthographic)](/assets/po2imOR.png)
 ### Description
 Renders 3D points to 2D image using orthographic projection.
 
@@ -53,7 +53,7 @@ Renders 3D points to 2D image using orthographic projection.
 ---
 
 ## Points To Image (Projection)
-![Empty Image Placeholder]()
+![Points To Image (Projection)](/assets/po2imPR.png)
 ### Description
 Perspective projection renderer with customizable FOV.
 
@@ -69,7 +69,7 @@ Perspective projection renderer with customizable FOV.
 ---
 
 ## Cube Limit
-![Empty Image Placeholder]()
+![Cube Limit](/assets/cllm.png)
 ### Description
 Filters points within relative cube dimensions (0-100% of original bounds).
 
@@ -83,7 +83,7 @@ Filters points within relative cube dimensions (0-100% of original bounds).
 ---
 
 ## Clean Points (KDTree)
-![Empty Image Placeholder]()
+![EClean Points (KDTree)](/assets/clpo.png)
 ### Description
 Removes outliers using KDTree neighborhood analysis.
 
@@ -97,8 +97,8 @@ Removes outliers using KDTree neighborhood analysis.
 
 ---
 
-## InterpolatePointsCKDTree
-![Empty Image Placeholder]()
+## Interpolate Points (KDTree)
+![Interpolate Points (KDTree)](/assets/intpo.png)
 ### Description
 Generates new points through neighborhood-based interpolation using KDTree. Enhances point cloud density in sparse regions by creating intermediate points between existing neighbors.
 
@@ -113,7 +113,7 @@ Generates new points through neighborhood-based interpolation using KDTree. Enha
 ---
 
 ## Export To PLY
-![Empty Image Placeholder]()
+![Export To PLY](/assets/extopl.png)
 ### Description
 Exports point cloud to PLY format (ASCII/binary).
 
@@ -125,7 +125,7 @@ Exports point cloud to PLY format (ASCII/binary).
 ---
 
 ## Import PLY
-![Empty Image Placeholder]()
+![Import PLY](/assets/imp.png)
 ### Description
 Import PLY point cloud files into compatible Point3D format.
 (Sperimental)
