@@ -1,6 +1,15 @@
 # ComfyUI_depthMapOperation
 
-# Depth Map Operation Nodes Documentation
+A simple set of nodes to generate a point cloud from an image and its depth map, perform transformations and some basic operations.
+
+Here an example of what can be done (not the gif, but the various rotations)
+![start image](/assets/start.jpg) ![gif generted](/assets/gif.gif)
+
+# Workflow
+
+![workflow](/assets/workflow.png)
+
+# Nodes
 
 ---
 
@@ -139,7 +148,7 @@ Import PLY point cloud files into compatible Point3D format.
 ---
 
 ## Cloud Points Info
-![Empty Image Placeholder]()
+![Cloud Points Info](/assets/clin.png)
 ### Description
 Displays point cloud statistics and coordinate ranges.
 
