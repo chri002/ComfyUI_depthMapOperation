@@ -3,7 +3,20 @@
 A simple set of nodes to generate a point cloud from an image and its depth map, perform transformations and some basic operations.
 
 Here an example of what can be done (not the gif, but the various rotations)
-![start image](/assets/start.jpg) ![gif generted](/assets/gif.gif)
+
+<div class="grid" align="center" markdown>
+ 
+  <img src=".//assets/start.jpg" width=40%>
+  <img src=".//assets/gif.gif" width=40%>
+  
+</div>
+
+# Installation
+
+On the console in the custom_nodes filder execute:
+```
+git clone https://github.com/chri002/ComfyUI_depthMapOperation
+```
 
 # Requirements
 
@@ -30,7 +43,7 @@ GPU-accelerated version using PyTorch tensors. Maintains gradient flow and suppo
 **Input Parameters**:
 - `image`: Input RGB/RGBA image
 - `depth_image`: Depth map image
-- `depth`: Z-axis scaling factor (1-1024)
+- `depth`: Z-axis scaling factor (1-1024) 
 - `quality`: Downsampling quality (1=1 point:1 pixel , 16=16 interpolate points every 2 pixel)
 
 
