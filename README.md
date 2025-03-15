@@ -5,6 +5,15 @@ A simple set of nodes to generate a point cloud from an image and its depth map,
 Here an example of what can be done (not the gif, but the various rotations)
 ![start image](/assets/start.jpg) ![gif generted](/assets/gif.gif)
 
+# Requirements
+
+these nodes require in order to function:
+ - torch
+ - numpy
+ - opencv-python
+ - scipy
+ - pandas
+
 # Workflow
 
 ![workflow](/assets/workflow.png)
