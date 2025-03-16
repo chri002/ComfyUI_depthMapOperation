@@ -1,0 +1,15 @@
+[project]
+name = "depthMapOperation"
+description = ""
+version = "1.0.0"
+license = {text = "GPL-3.0"}
+dependencies = ["torch", "numpy", "pandas", "scipy", "opencv-python"]
+
+[project.urls]
+Repository = "https://github.com/chri002/ComfyUI_depthMapOperation"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "arcanomandrake"
+DisplayName = "ComfyUI_depthMapOperation"
+Icon = ""
