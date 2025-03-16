@@ -178,3 +178,8 @@ Displays point cloud statistics and coordinate ranges.
 
 **Output**:
 - `STRING`: Formatted summary text
+
+---
+
+# TODO
+ - Fix artifacts with some extreme values
