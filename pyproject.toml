@@ -1,7 +1,7 @@
 [project]
 name = "depthMapOperation"
 description = ""
-version = "1.0.3"
+version = "1.0.4"
 license = {text = "GPL-3.0"}
 dependencies = ["torch", "numpy", "pandas", "scipy", "opencv-python"]
 
