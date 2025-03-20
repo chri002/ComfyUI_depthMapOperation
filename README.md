@@ -181,5 +181,11 @@ Displays point cloud statistics and coordinate ranges.
 
 ---
 
+# DEMO FUNCTIONS 
+
+<a target="_blank" href="https://colab.research.google.com/github/chri002/ComfyUI_depthMapOperation/blob/main/test.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Test In Colab" height="30px"/>
+</a>
+
 # TODO
  - Fix artifacts with some extreme values
