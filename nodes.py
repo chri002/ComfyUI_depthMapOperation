@@ -530,42 +530,50 @@ def project_points(points, fov=60, rotation=None, translation=None, scale=None, 
     """Fast 3D->2D projection with perspective correction"""
     if rotation is None:
         rotation = np.zeros(3)
+    else:
+        rotation = np.radians(rotation)  # Convert rotation from degrees to radians
     if translation is None:
         translation = np.zeros(3)
     if scale is None:
         scale = np.ones(3)
         
-    # camera parameter
-    fov_rad = m.radians(fov)
-    focal_length = img_size[1] / (2 * m.tan(fov_rad / 2))  # Focal length verticale
-
-    # transformation
+    # Ensure points are in float32
+    points = np.asarray(points, dtype=np.float32)
     
+    # Camera parameters
+    fov_rad = m.radians(fov)
+    focal_length = img_size[1] / (2.0 * m.tan(fov_rad / 2.0))
+
+    # Apply transformations 
     points = transform_points(points, translate=translation, rotate=rotation, scale=scale)
 
-    # Select points forward of camera (z < 0)
+    # Select only points in front of the camera
     valid = points[:, 2] < 0
-    points_t = points #[valid]
+    points_t = points[valid]  # Uncommented to filter invalid points
     
     if len(points_t) == 0:
         return np.empty((0, 2)), np.array([]), np.empty((0, 3))
 
-    # Proj cords
-    z = -points_t[:, 2] 
+    # Project coordinates
+    z = -points_t[:, 2]  # Distance from camera ù
     x_proj = (points_t[:, 0] * focal_length) / (z * aspect_ratio)
     y_proj = (points_t[:, 1] * focal_length) / z
 
-    # camera cords
-    pixel_x = (x_proj + img_size[0]/2).astype(int)
-    pixel_y = (y_proj + img_size[1]/2).astype(int)  # Rimosso il segno negativo
+    # Convert to pixel coordinates with rounding
+    pixel_x = np.round(x_proj + img_size[0]/2).astype(int)
+    pixel_y = np.round(y_proj + img_size[1]/2).astype(int)
 
-    # Clip and normalize
+    # Clip to image boundaries
     pixel_x = np.clip(pixel_x, 0, img_size[0]-1)
     pixel_y = np.clip(pixel_y, 0, img_size[1]-1)
-    z_norm = (z - z.min()) / (z.max() - z.min())
+
+    # Depth normalization 
+    z_min = z.min()
+    z_max = z.max()
+    z_range = z_max - z_min + 1e-5  
+    z_norm = (z - z_min)/z_range
 
     return np.column_stack([pixel_x, pixel_y]), z_norm, points_t[:, 3:6]
-      
 def project_points_ortho(points, rotation=None, translation=None, scale=None):
     """Orthographic 3D->2D projection"""
     if rotation is None:
@@ -595,7 +603,7 @@ def project_points_ortho(points, rotation=None, translation=None, scale=None):
     return np.column_stack([x_proj, y_proj]), z_norm, colors
 
 def render_points_fast(points, rotation=None, translation=None, scale=None, 
-                      img_size=(1000, 1000), color=False, cameraType=0, fov=60, correction=False, ksize=(2,2), thresh=2):
+                      img_size=(1000, 1000), color=False, cameraType=0, fov=60, correction=False, ksize=(2,2), thresh=2, TEST=False):
     """Ultra-fast rendering using pure NumPy and PIL"""
     # Project points to 2D
     if cameraType==0:
@@ -629,10 +637,17 @@ def render_points_fast(points, rotation=None, translation=None, scale=None,
     y_coords = proj_sorted[:, 1]
     x_coords = proj_sorted[:, 0]
     
-    
-    # Use panda 'unique' that is more faster than numpy
-    df = pd.DataFrame({'y': y_coords, 'x': x_coords})
-    unique_indices = df.drop_duplicates().index.to_numpy()
+    if TEST:
+        dtype = [('y', y_coords.dtype), ('x', x_coords.dtype)]
+        structured = np.zeros(len(y_coords), dtype=dtype)
+        structured['y'] = y_coords
+        structured['x'] = x_coords
+            
+        _, unique_indices = np.unique(structured, return_index=True)
+    else:
+        # Use panda 'unique' that is more faster than numpy
+        df = pd.DataFrame({'y': y_coords, 'x': x_coords})
+        unique_indices = df.drop_duplicates().index.to_numpy()
     
     
     # Extract unique coordinates and colors
@@ -1313,6 +1328,77 @@ class PointsToImage_proj_A:
     OUTPUT_NODE = True
 
     CATEGORY = "depthMapOperation"
+
+class PointsToImage_TEST:
+                
+    def __init__(self, device="cpu"):
+        self.device = device
+    def points2Img(self, images, points, color=False, fov=35, correct=False, ksize=2, threshold=2, camera = "Projection", panda=True):
+        returns = None 
+           
+        
+        transform = transforms.Compose([
+            transforms.ToTensor()
+        ])
+        
+        if len(points.shape)>2:
+            points = points.squeeze()
+        
+        for idx1,points_rot in enumerate(points.detach().cpu().numpy()[np.newaxis,:,:]):
+            
+            
+            img = cv2.cvtColor(images.cpu().numpy()[idx1], cv2.COLOR_RGBA2GRAY)
+            h,w = img.shape
+            
+            
+            translation = np.array([-w/2,-h/2,0])
+            scale = np.array([1,1,-1])
+            
+            points_cop = transform_points(points_rot.copy(), translate=translation, scale=scale)
+            translation = np.array([0,0,-max(w,h)/m.sin(m.radians(fov))*1.15])
+            points_cop = transform_points(points_cop, translate=translation)
+            
+            
+            
+            img_pil = render_points_fast(points_cop.copy(), img_size=(w,h), color=color, fov=fov, cameraType=1 if "Pro" in camera else 0, correction=correct, ksize=(ksize,ksize), thresh=threshold, TEST=panda)  
+            
+            img = np.array(img_pil)
+                           
+                        
+            if not(isinstance(returns, torch.Tensor)):
+              returns=transform(img)
+            else:
+              returns = torch.stack((returns,transform(img)))
+            
+            
+        out= returns if len(returns.shape)==4 else returns[None,:,:,:]
+        out = out.permute(0,2,3,1)
+        
+        return (out,)
+        
+        
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "images": ("IMAGE",{}),
+                "points": ("Points3D",{}),
+                "color" : ("BOOLEAN", {"default": False, "label_off": "OFF", "label_on": "ON"}),
+                "fov"   : ("FLOAT", {"default":35, "min":1, "max":2000, "step":0.1}),
+                "correct" : ("BOOLEAN", {"default": False, "label_off": "OFF", "label_on": "ON"}),
+                "ksize": ("INT", {"default":2, "min":2,"max":128}),
+                "threshold": ("INT", {"default":2, "min":0,"max":256}),
+                "camera" : (["Orthographic","Projection"],),
+                "panda" : ("BOOLEAN", {"default": False, "label_off": "OFF", "label_on": "ON"}),
+            },
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    FUNCTION = "points2Img"
+    OUTPUT_NODE = True
+
+    CATEGORY = "depthMapOperation"
+
         
 class CubeCut:
     def __init__(self, device="cpu"):
@@ -1576,6 +1662,7 @@ NODE_CLASS_MAPPINGS = {
     "PointsToImage (Projection)":PointsToImage_proj,
     "PointsToImage advance (Orthographic)":PointsToImage_ortho_A,
     "PointsToImage advance (Projection)":PointsToImage_proj_A,
+    "PointsToImage advance (DEBUG)":PointsToImage_TEST,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -1590,5 +1677,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "PointsToImage (Orthographic)": "Points To Image (Orthographic)",
     "PointsToImage (Projection)":"Points To Image (Projection)",
     "PointsToImage advance (Orthographic)":"Points To Image advance (Orthographic)",
-    "PointsToImage advance (Projection)":"PointsToImage advance (Projection)",
+    "PointsToImage advance (Projection)":"Points To Image advance (Projection)",
+    "PointsToImage advance (DEBUG)":"Points To Image (DEBUG)"
+    
 }
